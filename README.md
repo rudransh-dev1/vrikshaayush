@@ -13,7 +13,7 @@ An **offline-first, edge-AI mobile app** for rural Indian farmers to diagnose pl
 - 💊 Shows treatment recommendations instantly
 - 📚 Offline crop & disease library
 - 📊 Scan history & audit logs
-- 🌐 Supports **Hindi | Kannada | English**
+- 🌐 Seven languages: **English, Hindi, Kannada, Malayalam, Marathi, Tamil, Telugu**
 
 ---
 
@@ -31,8 +31,8 @@ Farmer's Phone
 ├── Local SQLite Database
 │   └── Scan history, disease library, user preferences
 │
-└── UI (Flutter)
-    └── 8 screens, multilingual, offline-ready
+└── UI (Android — Kotlin + XML layouts)
+    └── 12 screens, multilingual, offline-ready
 ```
 
 ---
@@ -41,25 +41,29 @@ Farmer's Phone
 
 ```
 vrikshaayush/
-├── assets/
-│   ├── images/          # Disease reference images
-│   └── icons/           # App icons
-├── model/
-│   ├── plant_disease_model.tflite   # TFLite model (download separately)
-│   └── labels.txt                   # 38 disease class labels
-├── lib/
-│   ├── screens/         # All 8 UI screens
-│   ├── widgets/         # Reusable UI components
-│   ├── data/            # Disease database (JSON)
-│   ├── utils/           # TFLite inference helper, image preprocessing
-│   └── l10n/            # Translations (EN, HI, KN)
+├── app/
+│   ├── build.gradle                 # compileSdk 35, minSdk 24, TFLite, Room, Glide, coroutines
+│   └── src/main/
+│       ├── kotlin/com/vrikshaayush/
+│       │   ├── data/                # Room database, DAO, scan record entity
+│       │   ├── ml/                  # DiseaseClassifier — TFLite inference + preprocessing
+│       │   ├── model/               # DiseaseInfo data class
+│       │   └── ui/                  # 12 activities + RecyclerView adapters
+│       ├── assets/
+│       │   ├── plant_disease_model.tflite   # model included in the repo (13 MB)
+│       │   ├── labels.txt                   # 38 disease class labels
+│       │   └── diseases.json                # offline disease library
+│       └── res/                     # layouts, drawables, 7 language folders
 ├── database/
-│   └── diseases.json    # Full offline disease database
+│   └── diseases.json                # source copy of the offline disease database
 ├── docs/
-│   ├── TFLITE_GUIDE.md          # TFLite integration guide
-│   ├── ARCHITECTURE.md          # System architecture
-│   ├── STRESS_TEST.md           # Architecture stress-test analysis
-│   └── UI_PROMPTS.md            # Stitch UI prompts for all 8 screens
+│   ├── TFLITE_GUIDE.md              # TFLite integration and retraining notes
+│   ├── ARCHITECTURE.md              # system architecture
+│   ├── STRESS_TEST.md               # architecture stress-test analysis
+│   └── UI_PROMPTS.md                # UI prompts for all screens
+├── gradle/                          # Gradle wrapper
+├── build.gradle                     # project-level build file
+├── settings.gradle
 └── README.md
 ```
 
@@ -68,29 +72,33 @@ vrikshaayush/
 ## 🚀 Getting Started
 
 ### Prerequisites
-- Flutter SDK (>=3.0.0)
-- Android Studio or VS Code
+- Android Studio (Ladybug or newer) with **JDK 17**
+- Android SDK 35
 - Android device or emulator (API 24+)
 
-### Setup
+### Build and run
 ```bash
-git clone https://github.com/t23050288-cmyk/vrikshaayush.git
+git clone https://github.com/rudransh-dev1/vrikshaayush.git
 cd vrikshaayush
-flutter pub get
+./gradlew assembleDebug
 ```
 
-### Download the TFLite Model
-See `docs/TFLITE_GUIDE.md` for step-by-step model download and integration.
+The APK is written to `app/build/outputs/apk/debug/app-debug.apk`. To run it directly, open the
+project folder in Android Studio and press Run.
+
+The TFLite model is already committed at `app/src/main/assets/plant_disease_model.tflite`, so the app
+works offline immediately after the first build. No extra download is needed.
 
 ---
 
 ## 🤖 AI Model
 
 - **Base model:** MobileNetV2 trained on PlantVillage dataset
+- **Included in this repo:** yes, no separate download required
 - **Format:** TensorFlow Lite (.tflite)
 - **Input:** 224×224 RGB image
 - **Output:** 38 disease classes + confidence score
-- **Size:** ~9MB (runs on any Android phone from 2018+)
+- **Size:** ~13 MB, bundled in `app/src/main/assets/` (runs on any Android phone from 2018+)
 - **Inference time:** ~150ms on mid-range device
 
 ---
@@ -124,7 +132,7 @@ See `docs/TFLITE_GUIDE.md` for step-by-step model download and integration.
 ## 📚 College Project Context
 
 **Course:** Interdisciplinary Project
-**Problem:** Karnataka farmers lost ₹X crores due to plant diseases & unpredictable weather (2023)
+**Problem:** Small and marginal farmers lose a large share of every crop to plant disease and unpredictable weather, and expert help rarely reaches villages with poor connectivity
 **Solution:** Edge-AI diagnosis tool that works in zero-connectivity rural areas
 **Disciplines:** Agriculture + Computer Science (AI/ML) + Design Thinking
 

@@ -15,6 +15,14 @@ For Vrikshaayush, this means a farmer in a remote village with zero network can 
 
 ---
 
+---
+
+> **Model already included.** The trained model ships with this repo at
+> `app/src/main/assets/plant_disease_model.tflite` (about 13 MB), together with `labels.txt`.
+> The app runs offline right after cloning, so you do **not** need to download anything to build it.
+> Steps 1 and 2 below are only useful if you want to **replace or retrain** the model, for example
+> with your own field photos.
+
 ## Step 1: Get the Pre-Trained Model
 
 We use the **PlantVillage model** — trained on 50,000+ plant images across 38 disease classes. It's free and open source.
